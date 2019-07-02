@@ -20,6 +20,7 @@ Plug 'jceb/vim-orgmode'
 "vimy stuff-------------------------------------
 Plug 'zhou13/vim-easyescape'
 Plug 'tpope/vim-fugitive'
+Plug 'ctrlpvim/ctrlp'
 Plug 'tpope/vim-commentary'
 Plug 'easymotion/vim-easymotion'
 Plug 'farmergreg/vim-lastplace'
@@ -149,7 +150,12 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
-
+inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
+      \ 'prefix': '^.*$',
+      \ 'source': 'rg -n ^ --color always',
+      \ 'options': '--ansi --delimiter : --nth 3..',
+      \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
+as
 "words completion
 "inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
 
@@ -202,11 +208,13 @@ let g:which_key_map['g'] = {
 
 let g:which_key_map['f']= {
       \ 'name' : '+find' ,
-      \ 'f' : ['Files' , 'files'],
+      \ 'F' : ['Files' , 'files'],
+      \ 'f' : ['GitFiles' , 'git files'],
+      \ 't' : ['BTags' , 'buffer tags'],
+      \ 'T' : ['Tags' , 'all buffer tags'],
       \ 'b' : ['Buffers'  , 'search buffers' ],
-      \ 'g' : ['GFILES' , 'git files'],
       \ 'h' : ['History' , 'history'],
-      \ 'a' : ['Ag', 'silver search'],
+      \ 'r' : ['Rg', 'rip'],
       \ 'l' : ['Lines' , 'Lines'],
       \ 'w' : ['Helptags' , 'Help'],
       \ }
@@ -239,11 +247,6 @@ let g:which_key_map['w'] = {
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
 
-"ctrlp stuff
-if executable('fd')
-  let g:ctrlp_user_command = 'fd -c never "" "%s"'
-  let g:ctrlp_use_caching = 0
-endif
 
 let g:current_line_whitespace_disabled_soft=1
 let g:defaultWinSwoopHeight = 15
@@ -266,31 +269,18 @@ highlight EndOfBuffer ctermbg=none
 highlight VertSplit   cterm=none ctermfg=240 ctermbg=240
 
 
-"Commands
-inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
-      \ 'prefix': '^.*$',
-      \ 'source': 'rg -n ^ --color always',
-      \ 'options': '--ansi --delimiter : --nth 3..',
-      \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
+command! -bang -nargs=? -complete=dir Files
+      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
-"rgrep
 command! -bang -nargs=* Rg
       \ call fzf#vim#grep(
-      \   'rg --column --line-number --no-heading --color=always --smart-case '
-      \     .shellescape(<q-args>), 1,
+      \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
       \   <bang>0 ? fzf#vim#with_preview('up:60%')
       \           : fzf#vim#with_preview('right:50%:hidden', '?'),
       \   <bang>0)
 
-"git rgrep
-command! -bang -nargs=* GGrep
-      \ call fzf#vim#grep(
-      \   'git grep --line-number '.shellescape(<q-args>), 0,
-      \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
-
-"files with preview
-command! -bang -nargs=? -complete=dir Files
-      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+command! -bang Colors
+      \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'}, <bang>0)
 
 
 "functions
