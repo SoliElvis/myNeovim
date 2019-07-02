@@ -17,9 +17,8 @@ Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 Plug 'pelodelfuego/vim-swoop'
 Plug 'tpope/vim-speeddating'
 Plug 'jceb/vim-orgmode'
-
-
 "vimy stuff-------------------------------------
+Plug 'zhou13/vim-easyescape'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'easymotion/vim-easymotion'
@@ -27,7 +26,6 @@ Plug 'farmergreg/vim-lastplace'
 Plug 'airblade/vim-gitgutter'
 Plug 'Chiel92/vim-autoformat'
 Plug 'ntpeters/vim-better-whitespace'
-
 Plug 'jiangmiao/auto-pairs'
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'pbrisbin/vim-mkdir'
@@ -46,7 +44,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 "" color
 Plug 'cocopon/iceberg.vim'
 Plug 'sjl/badwolf'
-
 call plug#end()
 
 " Quickly edit/reload this configuration file
@@ -79,6 +76,7 @@ set shiftwidth=2
 set smartindent
 set smarttab
 set tabstop=2
+set expandtab
 
 "" appearance
 syntax on
@@ -111,6 +109,12 @@ nnoremap gj j
 nnoremap gk k
 nnoremap <esc><esc> :nohlsearch<cr>
 nnoremap Y y$
+
+let g:easyescape_chars = { "j": 1, "k": 1 }
+let g:easyescape_timeout = 100
+cnoremap jk <ESC>
+cnoremap kj <ESC>
+
 
 "drag stuff with meta
 nnoremap <A-j> :m .+1<CR>==
@@ -145,10 +149,39 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
-" Advanced customization using autoload functions
-inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
 
+"words completion
+"inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
 
+let g:fzf_action = {
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-x': 'split',
+      \ 'ctrl-v': 'vsplit' }
+
+" Default fzf layout
+let g:fzf_layout = { 'down': '~40%' }
+
+" In Neovim, you can set up fzf window using a Vim command
+let g:fzf_layout = { 'window': 'enew' }
+let g:fzf_layout = { 'window': '-tabnew' }
+let g:fzf_layout = { 'window': '10new' }
+
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =  {
+      \ 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'],
+      \}
 
 ""-------------------------------"
 " which key
@@ -160,27 +193,12 @@ vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
 nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
 set timeoutlen=500
 let g:which_key_map =  {}
-" fugitive git bindings
-
 let g:which_key_map['g'] = {
       \ 'name' : '+git fugitive',
-      \ 'ga': ['Git add %:p', 'add'],
-      \ 'gs': ['Gstatus' , 'status'],
-      \ 'gc': ['Gcommit -v -q' , 'commit']
+      \ 's': ['Gstatus' , 'status'],
+      \ 'd': ['Gdiff' , 'diff'],
+      \ 'e': ['Gedit' , 'edit'],
       \ }
-
-" \ 'gc': ['Gcommit -v -q']
-" \ 'gt': ['Gcommit -v -q %:p']
-" \ 'gd': ['Gdiff']
-" \ 'ge': ['Gedit']
-" \ 'gw': ['Gwrite<CR>']
-" \ 'gl': ['silent! Glog:bot copen']
-" \ 'gp': ['Ggrep<Space>']
-" \ 'gm': ['Gmove<Space>']
-" \ 'gb': ['Git branch<Space>']
-" \ 'go': ['Git checkout<Space>']
-" \ 'gps' ['Dispatch! git push']
-" \ 'gpl' ['Dispatch! git pull']
 
 let g:which_key_map['f']= {
       \ 'name' : '+find' ,
@@ -216,17 +234,10 @@ let g:which_key_map['w'] = {
       \ }
 
 "------------------------------------""
-
 " plugin settings
-
 "" deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
-
-
-
 
 "ctrlp stuff
 if executable('fd')
@@ -242,15 +253,10 @@ let g:AutoPairsMapCh = 0
 let g:AutoPairsMapCR = 0
 let g:AutoPairsShortcutBackInsert='<M-i>'
 
-
 "" autoformat
 autocmd Rc BufEnter,BufWinEnter,BufRead,BufNewFile *
       \ if &filetype == "" | set filetype=text | endif
 autocmd Rc BufWrite * :Autoformat
-set tabstop=2
-set shiftwidth=2
-set expandtab
-
 
 let g:lightline = { 'colorscheme': 'iceberg' }
 colorscheme iceberg
@@ -258,6 +264,44 @@ highlight Normal      ctermbg=none
 highlight NonText     ctermbg=none
 highlight EndOfBuffer ctermbg=none
 highlight VertSplit   cterm=none ctermfg=240 ctermbg=240
+
+
+"Commands
+inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
+      \ 'prefix': '^.*$',
+      \ 'source': 'rg -n ^ --color always',
+      \ 'options': '--ansi --delimiter : --nth 3..',
+      \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
+
+"rgrep
+command! -bang -nargs=* Rg
+      \ call fzf#vim#grep(
+      \   'rg --column --line-number --no-heading --color=always --smart-case '
+      \     .shellescape(<q-args>), 1,
+      \   <bang>0 ? fzf#vim#with_preview('up:60%')
+      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+      \   <bang>0)
+
+"git rgrep
+command! -bang -nargs=* GGrep
+      \ call fzf#vim#grep(
+      \   'git grep --line-number '.shellescape(<q-args>), 0,
+      \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+
+"files with preview
+command! -bang -nargs=? -complete=dir Files
+      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+
+"functions
+function! s:fzf_statusline()
+  " Override statusline as you like
+  highlight fzf1 ctermfg=161 ctermbg=251
+  highlight fzf2 ctermfg=23 ctermbg=251
+  highlight fzf3 ctermfg=237 ctermbg=251
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 function! DeleteFileSwaps()
   write
@@ -280,43 +324,3 @@ function! DeleteFileSwaps()
   echo "Reset swap file extension for file: ".expand('%')
 endfunction
 command! DeleteFileSwaps :call DeleteFileSwaps()
-
-" <BS>           Backspace
-" <Tab>          Tab
-" <CR>           Enter
-" <Enter>        Enter
-" <Return>       Enter
-" <Esc>          Escape
-" <Space>        Space
-" <Up>           Up arrow
-" <Down>         Down arrow
-" <Left>         Left arrow
-" <Right>        Right arrow
-" <F1> - <F12>   Function keys 1 to 12
-" #1, #2..#9,#0  Function keys F1 to F9, F10
-" <Insert>       Insert
-" <Del>          Delete
-" <Home>         Home
-" <End>          End
-" <PageUp>       Page-Up
-" <PageDown>     Page-Down
-" <bar>          the '|' character, which otherwise needs to be escaped '\|'
-"
-"
-"
-
-
-
-" System Shortcuts:
-"     <CR>  : Insert new indented line after return if cursor in blank
-"     brackets or quotes.  <BS>  : Delete brackets in pair
-"     <M-p> : Toggle Autopairs (g:AutoPairsShortcutToggle)
-"     <M-e> : Fast Wrap (g:AutoPairsShortcutFastWrap)
-"     <M-n> : Jump to next closed pair (g:AutoPairsShortcutJump)
-"     <M-b> : BackInsert (g:AutoPairsShortcutBackInsert)
-
-" If <M-p> <M-e> or <M-n> conflict with another keys or want to bind to another keys, add
-
-"     let g:AutoPairsShortcutToggle = '<another key>'
-
-" to .vimrc, if the key is empty string '', then the shortcut will be disabled.

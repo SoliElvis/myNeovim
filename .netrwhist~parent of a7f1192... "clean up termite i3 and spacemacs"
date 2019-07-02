@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/sole'
+let g:netrw_dirhist_2='/home/sole/.config'
+let g:netrw_dirhist_3='/home/sole/.config/i3'
+let g:netrw_dirhist_4='/home/sole/.config/polybar'
+let g:netrw_dirhist_5='/home/sole/.config/i3'
+let g:netrw_dirhist_6='/home/sole/apps/polybar-themes/polybar-3'
+let g:netrw_dirhist_7='/home/sole/apps/polybar-themes/polybar-5'
+let g:netrw_dirhist_8='/home/sole/.config/polybar'
