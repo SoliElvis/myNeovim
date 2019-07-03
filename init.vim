@@ -12,7 +12,6 @@ Plug 'luochen1990/rainbow'
 let g:rainbow_active = 1
 
 "emacsy---------------------------------
-Plug 'neoclide/coc.nvim'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 Plug 'pelodelfuego/vim-swoop'
 Plug 'tpope/vim-speeddating'
@@ -20,7 +19,6 @@ Plug 'jceb/vim-orgmode'
 "vimy stuff-------------------------------------
 Plug 'zhou13/vim-easyescape'
 Plug 'tpope/vim-fugitive'
-Plug 'ctrlpvim/ctrlp'
 Plug 'tpope/vim-commentary'
 Plug 'easymotion/vim-easymotion'
 Plug 'farmergreg/vim-lastplace'
@@ -155,7 +153,6 @@ inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
       \ 'source': 'rg -n ^ --color always',
       \ 'options': '--ansi --delimiter : --nth 3..',
       \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
-as
 "words completion
 "inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
 
@@ -292,6 +289,7 @@ function! s:fzf_statusline()
   setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
 endfunction
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
+
 
 function! DeleteFileSwaps()
   write
